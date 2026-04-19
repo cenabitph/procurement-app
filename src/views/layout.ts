@@ -2,6 +2,7 @@ export interface LayoutOptions {
   title: string;
   active: string;
   content: string;
+  user?: { username: string; role: string };
   flash?: { type: 'success' | 'error' | 'info'; message: string };
 }
 
@@ -23,7 +24,7 @@ const navGroups = [
   { heading: 'Post-Award', keys: ['awards'] },
 ];
 
-export function layout({ title, active, content, flash }: LayoutOptions): string {
+export function layout({ title, active, content, user, flash }: LayoutOptions): string {
   const navHtml = navGroups.map((group) => {
     const items = navItems.filter((n) => group.keys.includes(n.key));
     return `
@@ -86,7 +87,18 @@ export function layout({ title, active, content, flash }: LayoutOptions): string
         <div class="text-blue-300 text-xs">Republic Act No. 9184 — 2016 Revised IRR</div>
       </div>
     </div>
-    <div class="text-blue-200 text-xs">FY ${new Date().getFullYear()}</div>
+    <div class="flex items-center gap-4">
+      <div class="text-blue-200 text-xs">FY ${new Date().getFullYear()}</div>
+      ${user ? `
+      <div class="flex items-center gap-3 pl-3 border-l border-blue-700">
+        <div class="text-right text-xs">
+          <div class="text-white font-semibold">${escHtml(user.username)}</div>
+          <div class="text-blue-300 text-xs">${escHtml(user.role)}</div>
+        </div>
+        <button onclick="logout()" class="px-3 py-1 text-xs bg-red-600 hover:bg-red-700 text-white transition">Logout</button>
+      </div>
+      ` : ''}
+    </div>
   </header>
 
   <!-- Sidebar -->
@@ -99,6 +111,14 @@ export function layout({ title, active, content, flash }: LayoutOptions): string
     ${flashHtml}
     ${content}
   </main>
+
+  <script>
+    async function logout() {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+  </script>
 
 </body>
 </html>`;

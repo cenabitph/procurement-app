@@ -3,6 +3,24 @@
 // Revised IRR (2016) compliant data structures
 // ============================================================
 
+// ─── Users ──────────────────────────────────────────────────
+
+export enum UserRole {
+  Admin = "admin",
+  Officer = "officer",
+  Viewer = "viewer",
+}
+
+export interface UserT {
+  id: string;
+  username: string;
+  passwordHash?: string;
+  role: UserRole;
+  active: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // ─── Enums ──────────────────────────────────────────────────
 
 export enum ProcurementMode {

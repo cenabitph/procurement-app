@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { query, queryOne } from '../db/index';
+import { getUser } from '../middleware/auth';
 import { layout, escHtml } from '../views/layout';
 import {
   pageHeader, breadcrumb, statusBadge, tableWrapper, th, td, trLink,
@@ -82,7 +83,7 @@ app.get('/', async (c) => {
     filterBar +
     `<div class="p-6">${card(table)}</div>`;
 
-  return c.html(layout({ title: 'Bids', active: 'bids', content }));
+  return c.html(layout({ title: 'Bids', active: 'bids', content, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── New form ────────────────────────────────────────────────
@@ -135,7 +136,7 @@ app.get('/new', async (c) => {
     breadcrumb([{ label: 'Bids', href: '/bids' }, { label: 'Submit' }]) +
     `<div class="p-6">${card(`<div class="p-5">${form}</div>`)}</div>`;
 
-  return c.html(layout({ title: 'Submit Bid', active: 'bids', content }));
+  return c.html(layout({ title: 'Submit Bid', active: 'bids', content, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── Create ──────────────────────────────────────────────────
@@ -234,7 +235,7 @@ app.get('/:id', async (c) => {
     breadcrumb([{ label: 'Bids', href: '/bids' }, { label: bid.supplier_name ?? '' }]) +
     `<div class="p-6">${infoCard}${lineItemsCard}</div>`;
 
-  return c.html(layout({ title: 'Bid Detail', active: 'bids', content, flash }));
+  return c.html(layout({ title: 'Bid Detail', active: 'bids', content, flash, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── Disqualify / reinstate ──────────────────────────────────

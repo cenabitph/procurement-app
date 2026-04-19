@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { query, queryOne } from '../db/index';
+import { getUser } from '../middleware/auth';
 import { layout, escHtml } from '../views/layout';
 import {
   pageHeader, breadcrumb, statusBadge, tableWrapper, th, td, trLink,
@@ -53,7 +54,7 @@ app.get('/', async (c) => {
   const content = pageHeader('APP', 'Annual Procurement Plans', { href: '/app-plan/new', label: 'New APP' }) +
     `<div class="p-6">${card(table)}</div>`;
 
-  return c.html(layout({ title: 'APP', active: 'app-plan', content }));
+  return c.html(layout({ title: 'APP', active: 'app-plan', content, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── New form ────────────────────────────────────────────────
@@ -79,7 +80,7 @@ app.get('/new', async (c) => {
     breadcrumb([{ label: 'APP', href: '/app-plan' }, { label: 'New' }]) +
     `<div class="p-6">${card(`<div class="p-5">${form}</div>`)}</div>`;
 
-  return c.html(layout({ title: 'New APP', active: 'app-plan', content }));
+  return c.html(layout({ title: 'New APP', active: 'app-plan', content, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── Create ──────────────────────────────────────────────────
@@ -195,7 +196,7 @@ app.get('/:id', async (c) => {
     breadcrumb([{ label: 'APP', href: '/app-plan' }, { label: `FY ${plan.fiscal_year}` }]) +
     `<div class="p-6">${metaCard}${entriesCard}</div>`;
 
-  return c.html(layout({ title: `APP ${plan.fiscal_year}`, active: 'app-plan', content, flash }));
+  return c.html(layout({ title: `APP ${plan.fiscal_year}`, active: 'app-plan', content, flash, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── Add entry ───────────────────────────────────────────────

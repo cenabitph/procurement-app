@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { query } from '../db/index';
+import { getUser } from '../middleware/auth';
 import { layout } from '../views/layout';
 import { kpiCard, formatPeso, statusBadge, tableWrapper, th, td, trLink, formatDate } from '../views/components';
 
@@ -86,7 +87,8 @@ app.get('/', async (c) => {
 
   const content = kpis + recentTable + breakdown + supplierKpi;
 
-  return c.html(layout({ title: 'Dashboard', active: 'dashboard', content }));
+  const user = getUser(c);
+  return c.html(layout({ title: 'Dashboard', active: 'dashboard', content, user: user ? { username: user.username, role: user.role } : undefined }));
 });
 
 function escHtml(s: string): string {

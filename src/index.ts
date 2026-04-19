@@ -2,6 +2,10 @@ import 'dotenv/config';
 import { Hono } from 'hono';
 import { logger } from 'hono/logger';
 
+import authRoutes from './routes/auth';
+import { authMiddleware } from './middleware/auth';
+import { loginPage } from './views/auth';
+
 import dashboardRoutes from './routes/dashboard';
 import ppmpRoutes from './routes/ppmp';
 import appPlanRoutes from './routes/app-plan';
@@ -14,6 +18,13 @@ import awardRoutes from './routes/awards';
 const app = new Hono();
 
 app.use('*', logger());
+
+// Public routes
+app.route('/api/auth', authRoutes);
+app.get('/login', (c) => c.html(loginPage()));
+
+// Protected routes
+app.use('/*', authMiddleware);
 
 app.route('/', dashboardRoutes);
 app.route('/ppmp', ppmpRoutes);

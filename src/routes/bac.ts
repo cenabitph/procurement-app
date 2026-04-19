@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { query, queryOne } from '../db/index';
+import { getUser } from '../middleware/auth';
 import { layout, escHtml } from '../views/layout';
 import {
   pageHeader, breadcrumb, tableWrapper, th, td, trLink,
@@ -71,7 +72,7 @@ app.get('/', async (c) => {
   const content = pageHeader('BAC — Bidding and Awards Committees', '', { href: '/bac/new', label: 'Form BAC' }) +
     `<div class="p-6">${card(table)}</div>`;
 
-  return c.html(layout({ title: 'BAC', active: 'bac', content }));
+  return c.html(layout({ title: 'BAC', active: 'bac', content, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── New committee form ──────────────────────────────────────
@@ -100,7 +101,7 @@ app.get('/new', async (c) => {
     breadcrumb([{ label: 'BAC', href: '/bac' }, { label: 'New' }]) +
     `<div class="p-6">${card(`<div class="p-5">${form}</div>`)}</div>`;
 
-  return c.html(layout({ title: 'Form BAC', active: 'bac', content }));
+  return c.html(layout({ title: 'Form BAC', active: 'bac', content, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── Create committee ────────────────────────────────────────
@@ -215,7 +216,7 @@ app.get('/:id', async (c) => {
     breadcrumb([{ label: 'BAC', href: '/bac' }, { label: bac.pr_ref ?? '' }]) +
     `<div class="p-6">${metaCard}${membersCard}${secretariatCard}${resolutionsCard}</div>`;
 
-  return c.html(layout({ title: 'BAC', active: 'bac', content, flash }));
+  return c.html(layout({ title: 'BAC', active: 'bac', content, flash, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── Members ─────────────────────────────────────────────────
@@ -268,7 +269,7 @@ app.get('/:id/resolutions/new', async (c) => {
     breadcrumb([{ label: 'BAC', href: '/bac' }, { label: c.req.param('id').slice(0, 8), href: `/bac/${bac.id}` }, { label: 'New Resolution' }]) +
     `<div class="p-6">${card(`<div class="p-5">${form}</div>`)}</div>`;
 
-  return c.html(layout({ title: 'New Resolution', active: 'bac', content }));
+  return c.html(layout({ title: 'New Resolution', active: 'bac', content, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── Resolution — create ─────────────────────────────────────
@@ -354,7 +355,7 @@ app.get('/:id/resolutions/:resId', async (c) => {
     breadcrumb([{ label: 'BAC', href: '/bac' }, { label: bac.pr_ref ?? '', href: `/bac/${id}` }, { label: res.resolution_no }]) +
     `<div class="p-6">${resCard}${votesCard}</div>`;
 
-  return c.html(layout({ title: `Resolution ${res.resolution_no}`, active: 'bac', content, flash }));
+  return c.html(layout({ title: `Resolution ${res.resolution_no}`, active: 'bac', content, flash, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 app.post('/:id/resolutions/:resId/approve', async (c) => {

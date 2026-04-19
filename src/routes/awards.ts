@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { query, queryOne } from '../db/index';
+import { getUser } from '../middleware/auth';
 import { layout, escHtml } from '../views/layout';
 import {
   pageHeader, breadcrumb, statusBadge, tableWrapper, th, td, trLink,
@@ -102,7 +103,7 @@ app.get('/', async (c) => {
   }
 
   const content = pageHeader('Awards & Notices', 'NOA and NTP management') + tabs + tabContent;
-  return c.html(layout({ title: 'Awards', active: 'awards', content }));
+  return c.html(layout({ title: 'Awards', active: 'awards', content, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── NOA — new form ──────────────────────────────────────────
@@ -144,7 +145,7 @@ app.get('/noa/new', async (c) => {
     breadcrumb([{ label: 'Awards', href: '/awards' }, { label: 'New NOA' }]) +
     `<div class="p-6">${card(`<div class="p-5">${form}</div>`)}</div>`;
 
-  return c.html(layout({ title: 'New NOA', active: 'awards', content }));
+  return c.html(layout({ title: 'New NOA', active: 'awards', content, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── NOA — create ────────────────────────────────────────────
@@ -206,7 +207,7 @@ app.get('/noa/:id', async (c) => {
     breadcrumb([{ label: 'Awards', href: '/awards' }, { label: `NOA — ${noa.pr_ref ?? ''}` }]) +
     `<div class="p-6">${noaCard}</div>`;
 
-  return c.html(layout({ title: 'NOA Detail', active: 'awards', content, flash }));
+  return c.html(layout({ title: 'NOA Detail', active: 'awards', content, flash, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 app.post('/noa/:id/accept', async (c) => {
@@ -264,7 +265,7 @@ app.get('/ntp/new', async (c) => {
     breadcrumb([{ label: 'Awards', href: '/awards' }, { label: 'New NTP' }]) +
     `<div class="p-6">${card(`<div class="p-5">${form}</div>`)}</div>`;
 
-  return c.html(layout({ title: 'New NTP', active: 'awards', content }));
+  return c.html(layout({ title: 'New NTP', active: 'awards', content, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── NTP — create ────────────────────────────────────────────
@@ -313,7 +314,7 @@ app.get('/ntp/:id', async (c) => {
     breadcrumb([{ label: 'Awards', href: '/awards?tab=ntp' }, { label: `NTP — ${ntp.pr_ref ?? ''}` }]) +
     `<div class="p-6">${ntpCard}</div>`;
 
-  return c.html(layout({ title: 'NTP Detail', active: 'awards', content, flash }));
+  return c.html(layout({ title: 'NTP Detail', active: 'awards', content, flash, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 export default app;

@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { query, queryOne } from '../db/index';
+import { getUser } from '../middleware/auth';
 import { layout, escHtml } from '../views/layout';
 import {
   pageHeader, breadcrumb, statusBadge, tableWrapper, th, td, trLink,
@@ -85,7 +86,7 @@ app.get('/', async (c) => {
     filters +
     `<div class="p-6">${card(table)}</div>`;
 
-  return c.html(layout({ title: 'PPMP', active: 'ppmp', content }));
+  return c.html(layout({ title: 'PPMP', active: 'ppmp', content, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── New form ────────────────────────────────────────────────
@@ -114,7 +115,7 @@ app.get('/new', async (c) => {
     breadcrumb([{ label: 'PPMP', href: '/ppmp' }, { label: 'New' }]) +
     `<div class="p-6">${card(`<div class="p-5">${form}</div>`)}</div>`;
 
-  return c.html(layout({ title: 'New PPMP', active: 'ppmp', content }));
+  return c.html(layout({ title: 'New PPMP', active: 'ppmp', content, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── Create ──────────────────────────────────────────────────
@@ -219,7 +220,7 @@ app.get('/:id', async (c) => {
     breadcrumb([{ label: 'PPMP', href: '/ppmp' }, { label: `FY ${ppmp.fiscal_year}` }]) +
     `<div class="p-6">${metaCard}${itemsCard}</div>`;
 
-  return c.html(layout({ title: `PPMP ${ppmp.fiscal_year}`, active: 'ppmp', content, flash }));
+  return c.html(layout({ title: `PPMP ${ppmp.fiscal_year}`, active: 'ppmp', content, flash, user: (() => { const u = getUser(c); return u ? { username: u.username, role: u.role } : undefined; })() }));
 });
 
 // ─── Add item ────────────────────────────────────────────────

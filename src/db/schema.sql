@@ -6,6 +6,18 @@
 CREATE DATABASE IF NOT EXISTS procurements CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE procurements;
 
+-- ─── Users ───────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS users (
+  id VARCHAR(36) NOT NULL PRIMARY KEY,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role ENUM('admin','officer','viewer') NOT NULL DEFAULT 'officer',
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_users_username (username)
+) ENGINE=InnoDB;
+
 -- ─── Procuring Entities ──────────────────────────────────────
 CREATE TABLE IF NOT EXISTS procuring_entities (
   id VARCHAR(36) NOT NULL PRIMARY KEY,
@@ -303,6 +315,8 @@ CREATE TABLE IF NOT EXISTS notices_to_proceed (
 ) ENGINE=InnoDB;
 
 -- ─── Sample Seed Data ─────────────────────────────────────────
+-- Users: Run 'bun src/db/seed-users.ts' to insert default users
+-- Default credentials: admin / admin
 INSERT IGNORE INTO procuring_entities (id, uacs_code, name, short_name, region, head_name) VALUES
   ('pe-001', '0501001000', 'Department of Public Works and Highways — NCR', 'DPWH-NCR', 'National Capital Region', 'Sec. Manuel Bonoan'),
   ('pe-002', '0901001000', 'Department of Health — NCR', 'DOH-NCR', 'National Capital Region', 'Sec. Ted Herbosa'),
