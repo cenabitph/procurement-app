@@ -1,0 +1,16 @@
+{
+  "name": "procurement-app",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "start": "bun src/index.ts",
+    "db:init": "bun src/db/init.ts"
+  },
+  "dependencies": {
+    "hono": "^4.12.14",
+    "mysql2": "^3.11.3",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
